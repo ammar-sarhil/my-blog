@@ -1,23 +1,24 @@
 @extends('layout.app')
 @section('content')
-<form method="POST" action="{{ route('posts.update',1) }}" >
+<form method="POST" action="{{ route('posts.update',$post->id) }}" >
 @csrf
 @method('PUT')
     <div class="mb-3 ">
       <label class="form-label">Title</label>
-      <input name="title" type="text" class="form-control" >
+      <input name="title" type="text" value="{{ $post->title }}" class="form-control" required>
     </div>
     <div class="mb-3">
   <label class="form-label">Description</label>
-  <textarea name="description" class="form-control" rows="3"></textarea>
+  <textarea name="description" class="form-control" rows="3" required>{{ $post->description }}</textarea>
 </div>
     <div class="mb-3 ">
       <label class="form-label">Post Creator</label>
-      <select name="post_creator" class="form-control">
-        <option value="1">Ammar</option>
-        <option value="2">Haidar</option>
-        <option value="3">Basel</option>
-        <option value="4">Mekdad</option>
+      <select name="post_creator" class="form-control" required>
+          @foreach ($users as $user)
+          <option @if ($user->id == $post->user_id) selected
+              
+          @endif value="{{ $user->id }}">{{ $user->name }}</option>
+      @endforeach
       </select>
     </div>
     

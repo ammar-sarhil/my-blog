@@ -18,16 +18,16 @@
   <tbody>
   @foreach ($posts as $post)
       <tr>
-      <td>{{ $post['id'] }}</td>
-      <td>{{ $post['title'] }}</td>
-      <td>{{ $post['posted_by'] }}</td>
-      <td>{{ $post['created_at'] }}</td>
+      <td>{{ $post->id}}</td>
+      <td>{{ $post->title}}</td>
+      <td>{{ $post->user->name }}</td>
+      <td>{{ $post->created_at}}</td>
       <td>
-      <a href="/posts/{{ $post['id'] }}" class="btn btn-info">view</a>
-      <a href="/{{ $post['id'] }}/edit" class="btn btn-primary">edit</a>
+      <a href="/posts/{{ $post->id}}" class="btn btn-info">view</a>
+      <a href="/{{ $post->id }}/edit" class="btn btn-primary">edit</a>
 
-      <form style="display:inline;" method="POST" action="{{ route('posts.destroy', $post['id']) }}">
-        @csrf
+      <form style="display:inline;" method="POST" action="{{ route('posts.destroy', $post->id) }}">
+        @csrf 
         @method('delete')
         <button type="submit" class="btn btn-danger">delete</button>
       </form>

@@ -3,28 +3,28 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
+use App\Models\User;
+
 
 class HomeController extends Controller
 {
     public function index()
     {
-        $allposts =[
-            ['id' =>1 , 'title'=>'php','posted_by' =>'ammar','created_at' =>'2024-14-8 09:00:00'],
-            ['id' =>2 , 'title'=>'html','posted_by' =>'haidar','created_at' =>'2024-14-8 09:00:00'],
-            ['id' =>3 , 'title'=>'js','posted_by' =>'basel','created_at' =>'2024-14-8 09:00:00'],
-            ['id' =>4 , 'title'=>'css','posted_by' =>'mekdad','created_at' =>'2024-14-8 09:00:00']
-        ];
-        return view('home', ['posts' =>$allposts]);
+        $postsFromDB = Post::all();
+        
+        return view('home', ['posts' =>$postsFromDB]);
     }
     public function show($postId)
     {   
-        $singlePost = [
-            'id' =>1 , 'title'=>'php','description'=> 'this is description','posted_by' =>'ammar','created_at' =>'2024-14-8 09:00:00'
-        ];
-        return view('show', ['post' => $singlePost]);
+        $singlePostFromDB = Post::find($postId);
+        
+        return view('show', ['post' => $singlePostFromDB]);
+        
     }
     public function create(){
-        return view('create');
+        $users = User::all();
+        return view('create' ,['users' => $users]);
     }
 
     public function store() {
@@ -35,21 +35,32 @@ class HomeController extends Controller
         $description = request()->description;
         $postCreator = request()->post_creator;
         // dd ($data);
+        $post=new Post;
+        $post->title = $title;
+        $post->description = $description;
+        $post->user_id=$postCreator;
+        $post->save();
         return to_route ('posts.index');
     }
-    public function edit(){
-        return view('edit');
+    public function edit(Post $post){
+        $users = User::all();
+        return view('edit' , ['users' =>$users ,'post'=>$post]);
     }
-    public function update(){
+    public function update( $postId){
         $title = request()->title;
         $description = request()->description;
         $postCreator = request()->post_creator;
         // dd ($title);
+        $singlePostFromDB=Post::find($postId);
+        $singlePostFromDB->update(['title'=>$title ,'description'=>$description,'user_id'=>$postCreator]);
 
-        return to_route ('posts.show', 1);
+
+        return to_route ('posts.show', $postId);
     }
 
-    public function destroy(){
+    public function destroy($postId){
+        $post =Post::find($postId);
+        $post->delete();
         return to_route('posts.index');
     }
 }
